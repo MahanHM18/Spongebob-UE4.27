@@ -41,6 +41,6 @@ private:
 	bool bShiftPressed;
 
 
-
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Character", meta = (AllowPrivateAccess = true))
 	class ASpongebobCharacter* Spongebob;
 };

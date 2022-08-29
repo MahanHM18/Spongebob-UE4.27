@@ -28,6 +28,11 @@ protected:
 
 	void Jump();
 
+	void Attack();
+
+
+	
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -45,6 +50,12 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float DoubleJumpForce;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	UAnimMontage* AttackMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	class USpongebobAttacksComponent* AttackComponent;
+
 	float TurnBase;
 
 	bool bDoubleJump;
@@ -52,4 +63,13 @@ private:
 public:
 
 	FORCEINLINE bool GetDubleJump() const { return bDoubleJump; }
+	
+	UFUNCTION(BlueprintCallable)
+	void ActiveAttackCollision();
+
+	UFUNCTION(BlueprintCallable)
+	void DeactiveAttackCollision();
+
+	UFUNCTION(BlueprintCallable)
+	FORCEINLINE USpongebobAttacksComponent* GetAttackComponent() { return AttackComponent; }
 };

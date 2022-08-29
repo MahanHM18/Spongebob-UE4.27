@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "GameFrameWork/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "SpongebobAttacksComponent.h"
 
 // Sets default values
 ASpongebobCharacter::ASpongebobCharacter() :
@@ -21,6 +22,9 @@ ASpongebobCharacter::ASpongebobCharacter() :
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SprinArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
+
+	AttackComponent = CreateDefaultSubobject<USpongebobAttacksComponent>(TEXT("AttackComponent"));
+
 
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -71,7 +75,7 @@ void ASpongebobCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ASpongebobCharacter::Jump);
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Released, this, &ACharacter::StopJumping);
 
-
+	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASpongebobCharacter::Attack);
 }
 
 void ASpongebobCharacter::MoveForward(float Axis)
@@ -119,4 +123,31 @@ void ASpongebobCharacter::Jump()
 		bDoubleJump = true;
 		LaunchCharacter(FVector(0, 0, DoubleJumpForce), false, true);
 	}
+}
+
+void ASpongebobCharacter::Attack()
+{
+	GetAttackComponent()->SimpleAttack();
+}
+
+void ASpongebobCharacter::ActiveAttackCollision()
+{
+	//TODO
+	GetCharacterMovement()->RotationRate = FRotator(0, 0, 0);
+
+	if (GetCharacterMovement()->IsFalling() && GetVelocity().Z < 0)
+	{
+		GetCharacterMovement()->GravityScale = .5f;
+		GetCharacterMovement()->StopMovementKeepPathing();
+	}
+
+
+
+}
+
+void ASpongebobCharacter::DeactiveAttackCollision()
+{
+	//TODO
+	GetCharacterMovement()->RotationRate = FRotator(0, 600.f, 0);
+	GetCharacterMovement()->GravityScale = 1;
 }
