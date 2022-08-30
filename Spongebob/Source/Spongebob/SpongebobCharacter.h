@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "SpongebobAttacksComponent.h"
 #include "SpongebobCharacter.generated.h"
 
 UCLASS()
@@ -29,6 +30,8 @@ protected:
 	void Jump();
 
 	void Attack();
+
+	void MovingUp();
 
 
 	
@@ -63,13 +66,9 @@ private:
 public:
 
 	FORCEINLINE bool GetDubleJump() const { return bDoubleJump; }
-	
-	UFUNCTION(BlueprintCallable)
-	void ActiveAttackCollision();
-
-	UFUNCTION(BlueprintCallable)
-	void DeactiveAttackCollision();
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USpongebobAttacksComponent* GetAttackComponent() { return AttackComponent; }
+
+	FORCEINLINE ESpongeBobState GetSpongebobState() { return AttackComponent->State; }
 };

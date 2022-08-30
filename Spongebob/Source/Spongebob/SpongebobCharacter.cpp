@@ -6,6 +6,7 @@
 #include "GameFrameWork/SpringArmComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "SpongebobAttacksComponent.h"
+#include "SpongebobAttacksComponent.h"
 
 // Sets default values
 ASpongebobCharacter::ASpongebobCharacter() :
@@ -54,10 +55,17 @@ void ASpongebobCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bDoubleJump == true && !GetCharacterMovement()->IsFalling())
+	if (!GetCharacterMovement()->IsFalling())
 	{
-		bDoubleJump = false;
+		if (bDoubleJump == true)
+		{
+			bDoubleJump = false;
+		}
+
+		GetAttackComponent()->State = ESpongeBobState::Normal;
+
 	}
+
 
 }
 
@@ -76,11 +84,13 @@ void ASpongebobCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Released, this, &ACharacter::StopJumping);
 
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASpongebobCharacter::Attack);
+
+	PlayerInputComponent->BindAction(FName("MovingUp"), IE_Pressed, this, &ASpongebobCharacter::MovingUp);
 }
 
 void ASpongebobCharacter::MoveForward(float Axis)
 {
-	if (Controller && Axis != 0)
+	if (Controller && Axis != 0 && (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State == ESpongeBobState::SimpleAttack))
 	{
 		const FRotator Yaw = FRotator(0, GetControlRotation().Yaw, 0);
 		const FVector Direction = FRotationMatrix(Yaw).GetUnitAxis(EAxis::X);
@@ -90,7 +100,7 @@ void ASpongebobCharacter::MoveForward(float Axis)
 
 void ASpongebobCharacter::MoveRight(float Axis)
 {
-	if (Controller && Axis != 0)
+	if (Controller && Axis != 0 && (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State == ESpongeBobState::SimpleAttack))
 	{
 		const FRotator Yaw = FRotator(0, GetControlRotation().Yaw, 0);
 		const FVector Direction = FRotationMatrix(Yaw).GetUnitAxis(EAxis::Y);
@@ -127,27 +137,13 @@ void ASpongebobCharacter::Jump()
 
 void ASpongebobCharacter::Attack()
 {
-	GetAttackComponent()->SimpleAttack();
-}
-
-void ASpongebobCharacter::ActiveAttackCollision()
-{
-	//TODO
-	GetCharacterMovement()->RotationRate = FRotator(0, 0, 0);
-
-	if (GetCharacterMovement()->IsFalling() && GetVelocity().Z < 0)
+	if (GetAttackComponent()->State == ESpongeBobState::Normal)
 	{
-		GetCharacterMovement()->GravityScale = .5f;
-		GetCharacterMovement()->StopMovementKeepPathing();
+		GetAttackComponent()->SimpleAttack();
 	}
-
-
-
 }
 
-void ASpongebobCharacter::DeactiveAttackCollision()
+void ASpongebobCharacter::MovingUp()
 {
-	//TODO
-	GetCharacterMovement()->RotationRate = FRotator(0, 600.f, 0);
-	GetCharacterMovement()->GravityScale = 1;
+	GetAttackComponent()->ComingUp();
 }

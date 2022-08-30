@@ -29,6 +29,8 @@ void USpongebobAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		bIsAir = Spongebob->GetCharacterMovement()->IsFalling();
 
 		bDoubleJump = Spongebob->GetDubleJump();
+
+		State = Spongebob->GetSpongebobState();
 	}
 
 

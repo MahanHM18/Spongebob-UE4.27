@@ -7,6 +7,15 @@
 #include "SpongebobAttacksComponent.generated.h"
 
 
+UENUM(BlueprintType)
+enum class ESpongeBobState : uint8
+{
+	Normal = 0			UMETA(DisplayName = "Normal"),
+	SimpleAttack = 1	UMETA(DisplayName = "SimpleAttack"),
+	ComingUp = 2		UMETA(DisplayName = "ComingUp"),
+	ComingDown = 3		UMETA(DisplayName = "ComingDown")
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class SPONGEBOB_API USpongebobAttacksComponent : public UActorComponent
 {
@@ -33,6 +42,17 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void DeactiveAttackCollision();
+
+	void ComingUp();
+
+	void Move();
+
+
+	bool bIsComingUp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	ESpongeBobState State;
+
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
@@ -40,4 +60,6 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	class ASpongebobCharacter* Spongebob;
+
+	
 };
