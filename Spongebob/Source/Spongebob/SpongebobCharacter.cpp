@@ -24,6 +24,17 @@ ASpongebobCharacter::ASpongebobCharacter() :
 	Camera->SetupAttachment(SprinArm, USpringArmComponent::SocketName);
 	Camera->bUsePawnControlRotation = false;
 
+
+	BubbleWand = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BubbleWand"));
+	BubbleWand->SetupAttachment(GetMesh(), "BubbleWandSocket");
+	BubbleWand->SetRelativeRotation(FRotator(0, 0, 90.f));
+	BubbleWand->SetRelativeScale3D(FVector(0.01f, 0.01f, 0.01f));
+	BubbleWand->SetVisibility(false);
+
+	BubbleHat = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BubbleHat"));
+	BubbleHat->SetupAttachment(GetMesh());
+	BubbleHat->SetVisibility(false);
+	
 	AttackComponent = CreateDefaultSubobject<USpongebobAttacksComponent>(TEXT("AttackComponent"));
 
 
@@ -61,8 +72,11 @@ void ASpongebobCharacter::Tick(float DeltaTime)
 		{
 			bDoubleJump = false;
 		}
-
-		GetAttackComponent()->State = ESpongeBobState::Normal;
+		if (GetSpongebobState() == ESpongeBobState::ComingUp)
+		{
+			GetAttackComponent()->State = ESpongeBobState::Normal;
+			BubbleHat->SetVisibility(false);
+		}
 
 	}
 
@@ -86,6 +100,7 @@ void ASpongebobCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ASpongebobCharacter::Attack);
 
 	PlayerInputComponent->BindAction(FName("MovingUp"), IE_Pressed, this, &ASpongebobCharacter::MovingUp);
+	PlayerInputComponent->BindAction(FName("MovingDown"), IE_Pressed, this, &ASpongebobCharacter::MovingDown);
 }
 
 void ASpongebobCharacter::MoveForward(float Axis)
@@ -126,13 +141,18 @@ void ASpongebobCharacter::LookUp(float Axis)
 
 void ASpongebobCharacter::Jump()
 {
-	ACharacter::Jump();
-
-	if (GetCharacterMovement()->IsFalling() && !bDoubleJump)
+	if (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State == ESpongeBobState::SimpleAttack )
 	{
-		bDoubleJump = true;
-		LaunchCharacter(FVector(0, 0, DoubleJumpForce), false, true);
+		ACharacter::Jump();
+
+		if (GetCharacterMovement()->IsFalling() && !bDoubleJump)
+		{
+			bDoubleJump = true;
+			LaunchCharacter(FVector(0, 0, DoubleJumpForce), false, true);
+		}
+		
 	}
+	
 }
 
 void ASpongebobCharacter::Attack()
@@ -147,3 +167,9 @@ void ASpongebobCharacter::MovingUp()
 {
 	GetAttackComponent()->ComingUp();
 }
+
+void ASpongebobCharacter::MovingDown()
+{
+	GetAttackComponent()->ComingDown();
+}
+

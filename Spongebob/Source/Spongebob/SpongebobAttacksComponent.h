@@ -45,7 +45,10 @@ public:
 
 	void ComingUp();
 
-	void Move();
+	void ComingDown();
+
+	UFUNCTION(BlueprintCallable)
+	void StartBubbleBounce();
 
 
 	bool bIsComingUp;

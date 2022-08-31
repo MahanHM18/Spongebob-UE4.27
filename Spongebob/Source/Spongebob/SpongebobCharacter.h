@@ -33,22 +33,27 @@ protected:
 
 	void MovingUp();
 
+	void MovingDown();
 
-	
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 private:
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* SprinArm;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera", meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* Camera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BubbleMeshs", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* BubbleWand;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BubbleMeshs", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* BubbleHat;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float DoubleJumpForce;
@@ -59,16 +64,19 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	class USpongebobAttacksComponent* AttackComponent;
 
+
 	float TurnBase;
 
 	bool bDoubleJump;
 
 public:
-
 	FORCEINLINE bool GetDubleJump() const { return bDoubleJump; }
 
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE USpongebobAttacksComponent* GetAttackComponent() { return AttackComponent; }
 
 	FORCEINLINE ESpongeBobState GetSpongebobState() { return AttackComponent->State; }
+
+	FORCEINLINE UStaticMeshComponent* GetBubbleWand() { return BubbleWand; }
+	FORCEINLINE UStaticMeshComponent* GetBubbleHat() { return BubbleHat; }
 };

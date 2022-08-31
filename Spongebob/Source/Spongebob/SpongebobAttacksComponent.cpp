@@ -48,7 +48,6 @@ void USpongebobAttacksComponent::SimpleAttack()
 {
 	if (Spongebob)
 	{
-		State = ESpongeBobState::SimpleAttack;
 		UAnimInstance* AnimInstance = Spongebob->GetMesh()->GetAnimInstance();
 
 		if (AnimInstance)
@@ -62,16 +61,15 @@ void USpongebobAttacksComponent::SimpleAttack()
 void USpongebobAttacksComponent::ActiveAttackCollision()
 {
 	Spongebob->GetCharacterMovement()->RotationRate = FRotator(0, 0, 0);
-
-
+	Spongebob->GetBubbleWand()->SetVisibility(true);
 	Spongebob->GetCharacterMovement()->GravityScale = .1;
 	Spongebob->GetCharacterMovement()->StopMovementKeepPathing();
-
+	State = ESpongeBobState::SimpleAttack;
 }
 
 void USpongebobAttacksComponent::DeactiveAttackCollision()
 {
-
+	Spongebob->GetBubbleWand()->SetVisibility(false);
 	State = ESpongeBobState::Normal;
 	Spongebob->GetCharacterMovement()->RotationRate = FRotator(0, 600.f, 0);
 	Spongebob->GetCharacterMovement()->GravityScale = 1;
@@ -83,10 +81,22 @@ void USpongebobAttacksComponent::ComingUp()
 	{
 		State = ESpongeBobState::ComingUp;
 		Spongebob->LaunchCharacter(FVector(0, 0, 600), true, true);
-		FTimerHandle Handle;
+		Spongebob->GetBubbleHat()->SetVisibility(true);
 	}
 }
 
-void USpongebobAttacksComponent::Move()
+void USpongebobAttacksComponent::ComingDown()
 {
+	if (Spongebob->GetCharacterMovement()->IsFalling() && State == ESpongeBobState::Normal)
+	{
+		State = ESpongeBobState::ComingDown;
+		Spongebob->GetCharacterMovement()->GravityScale = 0;
+		Spongebob->GetCharacterMovement()->StopMovementImmediately();
+	}
+}
+
+void USpongebobAttacksComponent::StartBubbleBounce()
+{
+	Spongebob->GetCharacterMovement()->GravityScale = 3;
+	//TODO
 }
