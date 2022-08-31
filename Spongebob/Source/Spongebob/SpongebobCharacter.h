@@ -55,6 +55,12 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BubbleMeshs", meta = (AllowPrivateAccess = "true"))
 	class UStaticMeshComponent* BubbleHat;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BubbleMeshs", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* BubbleFootRight;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "BubbleMeshs", meta = (AllowPrivateAccess = "true"))
+	class UStaticMeshComponent* BubbleFootLeft;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Movement", meta = (AllowPrivateAccess = "true"))
 	float DoubleJumpForce;
 
@@ -79,4 +85,7 @@ public:
 
 	FORCEINLINE UStaticMeshComponent* GetBubbleWand() { return BubbleWand; }
 	FORCEINLINE UStaticMeshComponent* GetBubbleHat() { return BubbleHat; }
+
+	FORCEINLINE UStaticMeshComponent* GetBubbleFootR() { return BubbleFootRight; }
+	FORCEINLINE UStaticMeshComponent* GetBubbleFootL() { return BubbleFootLeft; }
 };

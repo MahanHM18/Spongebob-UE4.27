@@ -34,6 +34,14 @@ ASpongebobCharacter::ASpongebobCharacter() :
 	BubbleHat = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BubbleHat"));
 	BubbleHat->SetupAttachment(GetMesh());
 	BubbleHat->SetVisibility(false);
+
+	BubbleFootLeft = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BubbleFootLeft"));
+	BubbleFootLeft->SetupAttachment(GetMesh());
+	BubbleFootLeft->SetVisibility(false);
+
+	BubbleFootRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BubbleFootRight"));
+	BubbleFootRight->SetupAttachment(GetMesh());
+	BubbleFootRight->SetVisibility(false);
 	
 	AttackComponent = CreateDefaultSubobject<USpongebobAttacksComponent>(TEXT("AttackComponent"));
 

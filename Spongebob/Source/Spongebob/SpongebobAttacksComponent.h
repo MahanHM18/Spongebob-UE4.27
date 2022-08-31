@@ -46,7 +46,10 @@ public:
 	void ComingUp();
 
 	void ComingDown();
-
+	
+	UFUNCTION(BlueprintCallable)
+	void EndComingDown();
+	
 	UFUNCTION(BlueprintCallable)
 	void StartBubbleBounce();
 

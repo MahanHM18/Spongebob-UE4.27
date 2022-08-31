@@ -31,17 +31,15 @@ void USpongebobAttacksComponent::BeginPlay()
 	{
 		Spongebob = Cast<ASpongebobCharacter>(GetOwner());
 	}
-
 }
 
 
 // Called every frame
-void USpongebobAttacksComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USpongebobAttacksComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                               FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
-
-
 }
 
 void USpongebobAttacksComponent::SimpleAttack()
@@ -54,16 +52,19 @@ void USpongebobAttacksComponent::SimpleAttack()
 		{
 			AnimInstance->Montage_Play(AttackMontage);
 		}
-
 	}
 }
 
 void USpongebobAttacksComponent::ActiveAttackCollision()
 {
 	Spongebob->GetCharacterMovement()->RotationRate = FRotator(0, 0, 0);
+	if (Spongebob->GetCharacterMovement()->IsFalling())
+	{
+		Spongebob->GetCharacterMovement()->GravityScale = .1;
+		Spongebob->GetCharacterMovement()->StopMovementKeepPathing();
+	}
 	Spongebob->GetBubbleWand()->SetVisibility(true);
-	Spongebob->GetCharacterMovement()->GravityScale = .1;
-	Spongebob->GetCharacterMovement()->StopMovementKeepPathing();
+
 	State = ESpongeBobState::SimpleAttack;
 }
 
@@ -98,5 +99,15 @@ void USpongebobAttacksComponent::ComingDown()
 void USpongebobAttacksComponent::StartBubbleBounce()
 {
 	Spongebob->GetCharacterMovement()->GravityScale = 3;
+	Spongebob->GetBubbleFootL()->SetVisibility(true);
+	Spongebob->GetBubbleFootR()->SetVisibility(true);
 	//TODO
+}
+
+void USpongebobAttacksComponent::EndComingDown()
+{
+	Spongebob->GetCharacterMovement()->GravityScale = 1;
+	Spongebob->GetBubbleFootL()->SetVisibility(false);
+	Spongebob->GetBubbleFootR()->SetVisibility(false);
+	State = ESpongeBobState::Normal;
 }
