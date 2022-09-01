@@ -15,8 +15,11 @@ USpongebobAttacksComponent::USpongebobAttacksComponent() :
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
+	Spongebob = Cast<ASpongebobCharacter>(GetOwner());
 
-
+	BubbleWandAttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BubbleWandAttackBox"));
+	if (Spongebob)
+		BubbleWandAttackBox->SetupAttachment(Spongebob->GetBubbleWand());
 	// ...
 }
 
@@ -27,10 +30,11 @@ void USpongebobAttacksComponent::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	if (Spongebob == nullptr)
-	{
-		Spongebob = Cast<ASpongebobCharacter>(GetOwner());
-	}
+
+	Spongebob = Cast<ASpongebobCharacter>(GetOwner());
+	//BubbleWandAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	BubbleWandAttackBox->OnComponentBeginOverlap.AddDynamic(this, &USpongebobAttacksComponent::OnBubbleWandOverlapped);
 }
 
 
@@ -110,4 +114,16 @@ void USpongebobAttacksComponent::EndComingDown()
 	Spongebob->GetBubbleFootL()->SetVisibility(false);
 	Spongebob->GetBubbleFootR()->SetVisibility(false);
 	State = ESpongeBobState::Normal;
+}
+
+void USpongebobAttacksComponent::OnBubbleWandOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                        UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                                        bool bFromSweep,
+                                                        const FHitResult& SweepResult)
+{
+	if (OtherActor->ActorHasTag("Tiki"))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Black, FString::Printf(TEXT("TIKI")));
+	}
+	
 }

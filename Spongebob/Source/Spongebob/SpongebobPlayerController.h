@@ -13,5 +13,14 @@ UCLASS()
 class SPONGEBOB_API ASpongebobPlayerController : public APlayerController
 {
 	GENERATED_BODY()
+protected:
+	virtual void BeginPlay() override;
+	
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerHUD", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UUserWidget> PlayerHUDClass;
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "PlayerHUD", meta = (AllowPrivateAccess = "true"))
+	class UPlayerHUD* PlayerHUD;
 };

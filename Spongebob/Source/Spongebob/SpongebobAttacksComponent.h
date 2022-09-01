@@ -10,18 +10,18 @@
 UENUM(BlueprintType)
 enum class ESpongeBobState : uint8
 {
-	Normal = 0			UMETA(DisplayName = "Normal"),
-	SimpleAttack = 1	UMETA(DisplayName = "SimpleAttack"),
-	ComingUp = 2		UMETA(DisplayName = "ComingUp"),
-	ComingDown = 3		UMETA(DisplayName = "ComingDown")
+	Normal = 0 UMETA(DisplayName = "Normal"),
+	SimpleAttack = 1 UMETA(DisplayName = "SimpleAttack"),
+	ComingUp = 2 UMETA(DisplayName = "ComingUp"),
+	ComingDown = 3 UMETA(DisplayName = "ComingDown")
 };
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class SPONGEBOB_API USpongebobAttacksComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
 	// Sets default values for this component's properties
 	USpongebobAttacksComponent();
 
@@ -29,9 +29,10 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+	                           FActorComponentTickFunction* ThisTickFunction) override;
 
 
 	void SimpleAttack();
@@ -46,10 +47,10 @@ public:
 	void ComingUp();
 
 	void ComingDown();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void EndComingDown();
-	
+
 	UFUNCTION(BlueprintCallable)
 	void StartBubbleBounce();
 
@@ -60,12 +61,18 @@ public:
 	ESpongeBobState State;
 
 private:
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	UAnimMontage* AttackMontage;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	class ASpongebobCharacter* Spongebob;
 
-	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BubbleWandAttackBox;
+
+public:
+	UFUNCTION()
+	void OnBubbleWandOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                            const FHitResult& SweepResult);
 };

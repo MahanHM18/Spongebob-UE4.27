@@ -6,7 +6,8 @@
 #include "Components/HorizontalBox.h"
 #include "Components/Image.h"
 #include "Components/PanelWidget.h"
-#include "Components/TextBlock.h"
+#include "Components/ProgressBar.h"
+
 
 bool UPlayerHUD::Initialize()
 {
@@ -15,7 +16,12 @@ bool UPlayerHUD::Initialize()
 		return false;
 	
 	return bSucces;
-
-	Cast<UImage>(Box->GetChildAt(0))->SetOpacity(0);
-	
 }
+
+void UPlayerHUD::SetHealth(float value)
+{
+	GEngine->AddOnScreenDebugMessage(-1,1,FColor::Green,FString::Printf(TEXT("HealthDeacrese")));
+	Cast<UImage>(Box->GetChildAt(0))->SetOpacity(0);
+	HealthBar->SetPercent(value / 100);
+}
+

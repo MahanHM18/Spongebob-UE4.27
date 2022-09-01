@@ -4,8 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/Image.h"
-#include "Components/ProgressBar.h"
 #include "PlayerHUD.generated.h"
 
 /**
@@ -25,5 +23,9 @@ private:
 
 	UPROPERTY(meta = (BindWidget))
 	class UHorizontalBox* Box = nullptr;
+
+
+public:
+	void SetHealth(float value);
 
 };
