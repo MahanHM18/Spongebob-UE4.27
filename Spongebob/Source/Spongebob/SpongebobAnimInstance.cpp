@@ -31,6 +31,8 @@ void USpongebobAnimInstance::UpdateAnimationProperties(float DeltaTime)
 		bDoubleJump = Spongebob->GetDubleJump();
 
 		State = Spongebob->GetSpongebobState();
+
+		bTipTop = Spongebob->bTipTop;
 	}
 
 

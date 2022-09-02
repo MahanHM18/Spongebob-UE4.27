@@ -19,11 +19,18 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadOnly,Category = "Mesh",meta = (AllowPrivateAccess = true))
-	class USkeletalMeshComponent* Mesh;
 	
+private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* Mesh;
+
+	bool bDoOnce = false;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void Break();
+
+	
 
 };

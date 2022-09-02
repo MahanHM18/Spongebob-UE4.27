@@ -5,6 +5,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFrameWork/CharacterMovementComponent.h"
 #include "SpongebobCharacter.h"
+#include "Tiki.h"
 
 // Sets default values for this component's properties
 USpongebobAttacksComponent::USpongebobAttacksComponent() :
@@ -18,8 +19,16 @@ USpongebobAttacksComponent::USpongebobAttacksComponent() :
 	Spongebob = Cast<ASpongebobCharacter>(GetOwner());
 
 	BubbleWandAttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BubbleWandAttackBox"));
+	BubbleHatAttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BubbleHatAttackBox"));
+	BubbleFeetAttackBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BubblaFeetAttakcBox"));
+	
 	if (Spongebob)
+	{
 		BubbleWandAttackBox->SetupAttachment(Spongebob->GetBubbleWand());
+		BubbleHatAttackBox->SetupAttachment(Spongebob->GetBubbleHat());
+		BubbleFeetAttackBox->SetupAttachment(Spongebob->GetMesh());
+	}
+		
 	// ...
 }
 
@@ -32,9 +41,14 @@ void USpongebobAttacksComponent::BeginPlay()
 	// ...
 
 	Spongebob = Cast<ASpongebobCharacter>(GetOwner());
-	//BubbleWandAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	BubbleWandAttackBox->OnComponentBeginOverlap.AddDynamic(this, &USpongebobAttacksComponent::OnBubbleWandOverlapped);
+	BubbleWandAttackBox->OnComponentBeginOverlap.AddDynamic(this, &USpongebobAttacksComponent::OnAttackBoxoverlapped);
+	BubbleFeetAttackBox->OnComponentBeginOverlap.AddDynamic(this,&USpongebobAttacksComponent::OnAttackBoxoverlapped);
+	BubbleHatAttackBox->OnComponentBeginOverlap.AddDynamic(this,&USpongebobAttacksComponent::OnAttackBoxoverlapped);
+
+	BubbleWandAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BubbleFeetAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	BubbleHatAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 
@@ -43,6 +57,12 @@ void USpongebobAttacksComponent::TickComponent(float DeltaTime, ELevelTick TickT
                                                FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (!Spongebob->GetCharacterMovement()->IsFalling())
+	{
+		BubbleFeetAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		BubbleHatAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 	// ...
 }
 
@@ -68,7 +88,7 @@ void USpongebobAttacksComponent::ActiveAttackCollision()
 		Spongebob->GetCharacterMovement()->StopMovementKeepPathing();
 	}
 	Spongebob->GetBubbleWand()->SetVisibility(true);
-
+	BubbleWandAttackBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	State = ESpongeBobState::SimpleAttack;
 }
 
@@ -78,12 +98,14 @@ void USpongebobAttacksComponent::DeactiveAttackCollision()
 	State = ESpongeBobState::Normal;
 	Spongebob->GetCharacterMovement()->RotationRate = FRotator(0, 600.f, 0);
 	Spongebob->GetCharacterMovement()->GravityScale = 1;
+	BubbleWandAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void USpongebobAttacksComponent::ComingUp()
 {
 	if (!Spongebob->GetDubleJump() && (State == ESpongeBobState::Normal || State == ESpongeBobState::SimpleAttack))
 	{
+		BubbleHatAttackBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		State = ESpongeBobState::ComingUp;
 		Spongebob->LaunchCharacter(FVector(0, 0, 600), true, true);
 		Spongebob->GetBubbleHat()->SetVisibility(true);
@@ -94,6 +116,7 @@ void USpongebobAttacksComponent::ComingDown()
 {
 	if (Spongebob->GetCharacterMovement()->IsFalling() && State == ESpongeBobState::Normal)
 	{
+		BubbleFeetAttackBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 		State = ESpongeBobState::ComingDown;
 		Spongebob->GetCharacterMovement()->GravityScale = 0;
 		Spongebob->GetCharacterMovement()->StopMovementImmediately();
@@ -113,17 +136,16 @@ void USpongebobAttacksComponent::EndComingDown()
 	Spongebob->GetCharacterMovement()->GravityScale = 1;
 	Spongebob->GetBubbleFootL()->SetVisibility(false);
 	Spongebob->GetBubbleFootR()->SetVisibility(false);
+	BubbleFeetAttackBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	State = ESpongeBobState::Normal;
 }
 
-void USpongebobAttacksComponent::OnBubbleWandOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+void USpongebobAttacksComponent::OnAttackBoxoverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                         UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
-                                                        bool bFromSweep,
-                                                        const FHitResult& SweepResult)
+                                                        bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor->ActorHasTag("Tiki"))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 1, FColor::Black, FString::Printf(TEXT("TIKI")));
+		Cast<ATiki>(OtherActor)->Break();
 	}
-	
 }

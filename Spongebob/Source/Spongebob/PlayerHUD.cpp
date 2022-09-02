@@ -21,7 +21,6 @@ bool UPlayerHUD::Initialize()
 void UPlayerHUD::SetHealth(float value)
 {
 	GEngine->AddOnScreenDebugMessage(-1,1,FColor::Green,FString::Printf(TEXT("HealthDeacrese")));
-	Cast<UImage>(Box->GetChildAt(0))->SetOpacity(0);
 	HealthBar->SetPercent(value / 100);
 }
 

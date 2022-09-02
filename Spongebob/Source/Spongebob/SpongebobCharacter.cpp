@@ -11,7 +11,8 @@
 // Sets default values
 ASpongebobCharacter::ASpongebobCharacter() :
 	TurnBase(45.f),
-	bDoubleJump(false)
+	bDoubleJump(false),
+	bCanAttack(true)
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -42,9 +43,8 @@ ASpongebobCharacter::ASpongebobCharacter() :
 	BubbleFootRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BubbleFootRight"));
 	BubbleFootRight->SetupAttachment(GetMesh());
 	BubbleFootRight->SetVisibility(false);
-	
-	AttackComponent = CreateDefaultSubobject<USpongebobAttacksComponent>(TEXT("AttackComponent"));
 
+	AttackComponent = CreateDefaultSubobject<USpongebobAttacksComponent>(TEXT("AttackComponent"));
 
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
@@ -64,8 +64,6 @@ ASpongebobCharacter::ASpongebobCharacter() :
 void ASpongebobCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-
 }
 
 
@@ -84,11 +82,12 @@ void ASpongebobCharacter::Tick(float DeltaTime)
 		{
 			GetAttackComponent()->State = ESpongeBobState::Normal;
 			BubbleHat->SetVisibility(false);
+			
 		}
-
+		
+		
+		bCanAttack = true;
 	}
-
-
 }
 
 // Called to bind functionality to input
@@ -109,11 +108,15 @@ void ASpongebobCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInput
 
 	PlayerInputComponent->BindAction(FName("MovingUp"), IE_Pressed, this, &ASpongebobCharacter::MovingUp);
 	PlayerInputComponent->BindAction(FName("MovingDown"), IE_Pressed, this, &ASpongebobCharacter::MovingDown);
+
+	PlayerInputComponent->BindAction(FName("TipTop"), IE_Pressed, this, &ASpongebobCharacter::TipTopPressed);
+	PlayerInputComponent->BindAction(FName("TipTop"), IE_Released, this, &ASpongebobCharacter::TipTopReleased);
 }
 
 void ASpongebobCharacter::MoveForward(float Axis)
 {
-	if (Controller && Axis != 0 && (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State == ESpongeBobState::SimpleAttack))
+	if (Controller && Axis != 0 && (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->
+		State == ESpongeBobState::SimpleAttack))
 	{
 		const FRotator Yaw = FRotator(0, GetControlRotation().Yaw, 0);
 		const FVector Direction = FRotationMatrix(Yaw).GetUnitAxis(EAxis::X);
@@ -123,7 +126,8 @@ void ASpongebobCharacter::MoveForward(float Axis)
 
 void ASpongebobCharacter::MoveRight(float Axis)
 {
-	if (Controller && Axis != 0 && (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State == ESpongeBobState::SimpleAttack))
+	if (Controller && Axis != 0 && (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->
+		State == ESpongeBobState::SimpleAttack))
 	{
 		const FRotator Yaw = FRotator(0, GetControlRotation().Yaw, 0);
 		const FVector Direction = FRotationMatrix(Yaw).GetUnitAxis(EAxis::Y);
@@ -149,7 +153,8 @@ void ASpongebobCharacter::LookUp(float Axis)
 
 void ASpongebobCharacter::Jump()
 {
-	if (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State == ESpongeBobState::SimpleAttack )
+	if (GetAttackComponent()->State == ESpongeBobState::Normal || GetAttackComponent()->State ==
+		ESpongeBobState::SimpleAttack)
 	{
 		ACharacter::Jump();
 
@@ -158,15 +163,14 @@ void ASpongebobCharacter::Jump()
 			bDoubleJump = true;
 			LaunchCharacter(FVector(0, 0, DoubleJumpForce), false, true);
 		}
-		
 	}
-	
 }
 
 void ASpongebobCharacter::Attack()
 {
-	if (GetAttackComponent()->State == ESpongeBobState::Normal)
+	if (GetAttackComponent()->State == ESpongeBobState::Normal && bCanAttack)
 	{
+		bCanAttack = false;
 		GetAttackComponent()->SimpleAttack();
 	}
 }
@@ -181,3 +185,15 @@ void ASpongebobCharacter::MovingDown()
 	GetAttackComponent()->ComingDown();
 }
 
+
+void ASpongebobCharacter::TipTopPressed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 100;
+	bTipTop = true;
+}
+
+void ASpongebobCharacter::TipTopReleased()
+{
+	bTipTop = false;
+	GetCharacterMovement()->MaxWalkSpeed = 400;
+}

@@ -70,9 +70,15 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
 	class UBoxComponent* BubbleWandAttackBox;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BubbleHatAttackBox;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Attack", meta = (AllowPrivateAccess = "true"))
+	class UBoxComponent* BubbleFeetAttackBox;
+
 public:
 	UFUNCTION()
-	void OnBubbleWandOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	void OnAttackBoxoverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	                            UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
 	                            const FHitResult& SweepResult);
 };

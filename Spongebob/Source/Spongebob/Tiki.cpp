@@ -22,7 +22,7 @@ ATiki::ATiki()
 void ATiki::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	bDoOnce = true;
 }
 
 // Called every frame
@@ -39,10 +39,16 @@ void ATiki::Tick(float DeltaTime)
 		FRotator TargetRotator = FVector(FixedTarget - TikiVector).Rotation() - FRotator(0, 90, 0);
 		SetActorRotation(FMath::Lerp(GetActorRotation(),TargetRotator,6 * GetWorld()->GetDeltaSeconds()));
 	}
-	
-
-	
-	
 
 }
+
+void ATiki::Break()
+{
+	if (bDoOnce)
+	{
+		bDoOnce = false;
+		Destroy();
+	}
+}
+
 

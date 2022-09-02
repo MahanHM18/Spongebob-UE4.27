@@ -35,6 +35,9 @@ protected:
 
 	void MovingDown();
 
+	void TipTopPressed();
+	void TipTopReleased();
+
 
 public:
 	// Called every frame
@@ -74,6 +77,9 @@ private:
 	float TurnBase;
 
 	bool bDoubleJump;
+	
+	bool bCanAttack;
+	
 
 public:
 	FORCEINLINE bool GetDubleJump() const { return bDoubleJump; }
@@ -88,4 +94,6 @@ public:
 
 	FORCEINLINE UStaticMeshComponent* GetBubbleFootR() { return BubbleFootRight; }
 	FORCEINLINE UStaticMeshComponent* GetBubbleFootL() { return BubbleFootLeft; }
+
+	bool bTipTop;
 };
