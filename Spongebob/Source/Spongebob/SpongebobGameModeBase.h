@@ -13,5 +13,4 @@ UCLASS()
 class SPONGEBOB_API ASpongebobGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
 };
